@@ -1,86 +1,42 @@
 <template>
   <div id="app">
-    <div class="form">
-      <h1>Создание поста</h1>
-      <div>
-        <input 
-          v-model="title"
-          type="text" 
-          placeholder="Название поста"
-        >
-      </div>
-      <div>
-        <input
-          v-model="text"
-          type="text"
-          placeholder="Содержание поста"
-        >
-      </div>
-      <button @click="addPost">Добавить пост</button>
-    </div>
+    <post-form
+      @add="addPost"
+    ></post-form>
 
     <div class="posts">
       <h2>Список постов</h2>
-      <div v-if="posts.length === 0">
-        Добавленных постов нет
-      </div>
-      <div 
-        v-for="(post, index) in posts"
-        :key="index"
-        class="post"
-      >
-        <div style="display: flex; justify: space-between; align-items: center;">
-          <div style="width: 90%;">
-            <h4>Название поста: {{ post.title }}</h4>
-            <p><strong>Содержание поста:</strong> {{ post.text }}</p>
-          </div> 
 
-          <div>
-            <button 
-              style="border: 1px solid red; color: red;"
-              @click="deletePost(index)"
-            >
-              Удалить
-            </button>
-          </div>
-        </div>
-      </div>
+      <post-list
+        :posts="posts"
+      ></post-list>
     </div>
-
-    
-  
-    <!-- <div>
-      Количество лайков: {{ likes }}
-    </div>
-    <div>
-      Количество дизлайков: {{ dislikes }}
-    </div>
-    <div>
-      <button class="like" @click="addLike">Лайк</button>
-      <button class="dislike" @click="addDislike">Дизлайк</button>
-    </div> -->
   </div>
 </template>
 
 <script>
+import PostList from '@/components/PostList.vue'
+import PostForm from '@/components/PostForm.vue'
+
 export default {
   name: 'App',
+  components: {
+    PostList, PostForm,
+  },
   data() {
     return {
       title: '',
       text: '',
-      likes: 0,
-      dislikes: 0,
       posts: [
         {
           id: 1,
           title: 'Пост №1',
-          text: 'Текст поста №1',
+          body: 'Текст поста №1',
         },
         {
           id: 2,
           title: 'Пост №2',
-          text: 'Текст поста №2',
+          body: 'Текст поста №2',
         },
       ],
     };
@@ -92,12 +48,8 @@ export default {
     addDislike() {
       this.dislikes += 1
     },
-    addPost() {
-      this.posts.push({
-        title: this.title,
-        text: this.text,
-      });
-      this.title = this.text = '';
+    addPost(post) {
+      this.posts.push(post);
     },
     deletePost(index) {
       this.posts.splice(index, 1);
