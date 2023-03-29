@@ -40,7 +40,11 @@ export default {
             required: true,
         },
     },
-    
+    methods: {
+        deletePost(index) {
+            this.$emit('delete-post', index, '123')
+        }
+    },
 }
 </script>
 

@@ -7,8 +7,15 @@
     <div class="posts">
       <h2>Список постов</h2>
 
+      <input 
+        v-model="searchString"
+        placeholder="Поиск поста" 
+        style="margin-bottom: 20px;"
+      >
+
       <post-list
-        :posts="posts"
+        :posts="searchedPosts"
+        @delete-post="deletePost"
       ></post-list>
     </div>
   </div>
@@ -17,6 +24,7 @@
 <script>
 import PostList from '@/components/PostList.vue'
 import PostForm from '@/components/PostForm.vue'
+import axios from 'axios'
 
 export default {
   name: 'App',
@@ -27,19 +35,20 @@ export default {
     return {
       title: '',
       text: '',
-      posts: [
-        {
-          id: 1,
-          title: 'Пост №1',
-          body: 'Текст поста №1',
-        },
-        {
-          id: 2,
-          title: 'Пост №2',
-          body: 'Текст поста №2',
-        },
-      ],
+      posts: [],
+      searchString: '',
     };
+  },
+  computed: {
+    searchedPosts() {
+      const sortedPosts = [];
+      for (const post of this.posts) {
+        if (post.title.includes(this.searchString)) {
+          sortedPosts.push(post);
+        }
+      }
+      return sortedPosts;
+    },
   },
   methods: {
     addLike() {
@@ -49,11 +58,27 @@ export default {
       this.dislikes += 1
     },
     addPost(post) {
-      this.posts.push(post);
+      this.posts.push({
+        ...post,
+      });
     },
     deletePost(index) {
-      this.posts.splice(index, 1);
-    }
+      this.posts.splice(index, 1)
+    },
+    async getPosts() {
+      const url = 'https://jsonplaceholder.typicode.com/posts'
+      try {
+        const response = await axios.get(url)
+        this.posts = response.data
+      }
+      catch(error) {
+        console.error('ОШИБКА')
+        console.error('Произошла ошибка при получении постов')
+      }
+    },
+  },
+  async created() {
+    await this.getPosts()
   },
 }
 </script>
