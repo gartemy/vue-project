@@ -13,8 +13,23 @@
         style="margin-bottom: 20px;"
       >
 
+      <select 
+        v-model="sortType"
+        style="margin-bottom: 20px;"
+      >
+        <option>
+          Выберите тип сортировки
+        </option>
+        <option>
+          По названию
+        </option>
+        <option>
+          По содержанию
+        </option>
+      </select>
+
       <post-list
-        :posts="searchedPosts"
+        :posts="searchAndSortedPosts"
         @delete-post="deletePost"
       ></post-list>
     </div>
@@ -37,6 +52,7 @@ export default {
       text: '',
       posts: [],
       searchString: '',
+      sortType: 'Выберите тип сортировки',
     };
   },
   computed: {
@@ -48,6 +64,22 @@ export default {
         }
       }
       return sortedPosts;
+    },
+    searchAndSortedPosts() {
+      const searchedPostsCopy = [...this.searchedPosts]
+      if (this.sortType === 'По названию') {
+        return searchedPostsCopy.sort((post1, post2) => {
+          return post1.title.localeCompare(post2.title)
+        })
+      }
+      else if (this.sortType === 'По содержанию') {
+        return searchedPostsCopy.sort((post1, post2) => {
+          return post1.body.localeCompare(post2.body)
+        })
+      }
+      else {
+        return searchedPostsCopy
+      }
     },
   },
   methods: {
@@ -77,8 +109,42 @@ export default {
       }
     },
   },
+  watch: {
+    // sortType(newValue, oldValue) {
+      // console.log('Значение sortType изменилось')
+      // console.log(`Новое значение: ${newValue}`)
+      // console.log(`Старое значение: ${oldValue}`)
+      // if (newValue == 'По названию') {
+      //   this.posts = this.posts.sort((post1, post2) => {
+      //     return post1.title.localeCompare(post2.title)
+      //   })
+      // }
+      // else if (newValue == 'По содержанию') {
+      //   this.posts = this.posts.sort((post1, post2) => {
+      //     return post1.body.localeCompare(post2.body)
+      //   })
+      // }
+    // }
+  },
   async created() {
+    // То, что происходит при создании компонента
+    console.log('created')
     await this.getPosts()
+  },
+  mounted() {
+    // То, что происходит, когда компонент появляется на экане
+    console.log('mounted')
+  },
+  beforeUpdate() {
+    // То, что происходит перед тем, как компонент обновится
+    console.log('beforeUpdate')
+  },
+  updated() {
+    // То, что происходит после обновления компонента
+    console.log('updated')
+  },
+  beforeDestroy() {
+    // То, что происходит перед тем, как компонент умрет
   },
 }
 </script>
